@@ -2,18 +2,21 @@
   <div class="app" id="app">
     <NavBar/>
     <TextArea/>
+    <SettingModal/>
   </div>
 </template>
 
 <script>
 import TextArea from './components/TextArea.vue'
-import NavBar from '@/components/Fixed/navBar/NavBar'
+import NavBar from '@/components/navBar/NavBar'
+import SettingModal from '@/components/SettingModal'
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    TextArea
+    TextArea,
+    SettingModal
   }
 }
 </script>

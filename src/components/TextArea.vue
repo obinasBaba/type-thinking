@@ -58,7 +58,6 @@ const cursorStyle = reactive({
 })
 
 function handleFocus () {
-  console.log('focused')
   input.value.focus()
 }
 
@@ -74,12 +73,15 @@ function handleBackspace () {
 
 function handleInput () {
   // console.log( 'dataInput', typedInput.value, activeLetter.value === ' ' ? '_' : activeLetter.value )
+
+  // check for error
   if (typedInput.value !== activeLetter.value) {
     errors.set(activeIdx.value, true)
     typedInput.value = ''
     return
   }
 
+  // next quote
   if (text.value.length - 1 === activeIdx.value) { // check for end of current text
     activeIdx.value = 0
     text.value = texts[++activeText.value]
@@ -92,6 +94,7 @@ function handleInput () {
     return
   }
 
+  // normal continuation
   const next = text.value[++activeIdx.value]
   cursorLetter.value = next === ' ' ? '_' : next
   activeLetter.value = next
