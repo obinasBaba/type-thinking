@@ -20,7 +20,7 @@
 }
 
 @mixin fluid-props($props, $amount) {
-  #{$props}: #{fluid-unit($amount)};
+  #{$props}: #{f-unit($amount)};
 }
 
 @mixin fluid-type($min-vw, $max-vw, $min-font-size, $max-font-size) {

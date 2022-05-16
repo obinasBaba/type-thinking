@@ -10,11 +10,7 @@
   @return $number;
 }
 
-@function fluid-unit($amount){
-  @return calc(#{$amount} * var(--coef-indent));
-}
-
-@function fluid-indent($amount){
+@function f-unit($amount){
   @return calc(#{$amount} * var(--coef-indent));
 }
 

@@ -4,16 +4,36 @@
       L
     </div>
     <div class="icons">
-      <span class="theme" style="background-image: url('/icon-theme.svg') "/>
-      <span class="fullscreen" style="background-image: url('/icon-fullscreen.svg') "/>
-      <span class="text-pref" style="background-image: url('/icon-text.svg') "/>
-      <span class="setting" style="background-image: url('/icon-setting.svg') "/>
-      <button class="login">Login</button>
+      <span
+        class="theme"
+        style="background-image: url('/icon-theme.svg') "
+      />
+      <span
+        class="fullscreen"
+        style="background-image: url('/icon-fullscreen.svg') "
+      />
+      <span
+        class="text-pref"
+        style="background-image: url('/icon-text.svg') "
+      />
+      <span
+        class="setting"
+        style="background-image: url('/icon-setting.svg') "
+        @click="toggleSettingClick"
+      />
+      <button class="login">
+        Login
+      </button>
     </div>
   </nav>
 </template>
 
 <script setup>
+import { useModalStore } from '@/store/modalStore'
+
+const modalStore = useModalStore()
+
+const toggleSettingClick = () => modalStore.toggleSetting()
 
 </script>
 
@@ -27,7 +47,7 @@ nav {
   right: 0;
   display: flex;
   justify-content: space-between;
-  padding: s.fluid-indent(.5rem) s.fluid-indent(2rem);
+  padding: s.f-unit(.5rem) s.f-unit(2rem);
   cursor: pointer;
 
   border: thin solid red;

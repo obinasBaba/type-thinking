@@ -1,39 +1,56 @@
 <template>
   <div class="container is-max-desktop py-6 px-4">
-
     <div class="wrapper">
-      <div class="txt" @click="handleFocus">
-        <h2 class="ui header main-text" ref="containerTxt">
-               <span v-for="(letter, idx) of text"
-                     class="letter"
-                     :key="idx"
-                     :class="[{isActive: idx === activeIdx}, {[ errors.get(idx) ? 'incorrect' : 'correct' ] : idx < activeIdx} ]"
-                     :ref="el => idx === activeIdx && (activeRef = el)"
-               >
-                 {{ letter }}
-               </span>
+      <div
+        class="txt"
+        @click="handleFocus"
+      >
+        <h2
+          ref="containerTxt"
+          class="ui header main-text"
+        >
+          <span
+            v-for="(letter, idx) of text"
+            :key="idx"
+            :ref="el => idx === activeIdx && (activeRef = el)"
+            class="letter"
+            :class="[{isActive: idx === activeIdx}, {[ errors.get(idx) ? 'incorrect' : 'correct' ] : idx < activeIdx} ]"
+          >
+            {{ letter }}
+          </span>
 
-          <span class="cursor" v-text="cursorLetter" :style="cursorStyle.style"/>
+          <span
+            class="cursor"
+            :style="cursorStyle.style"
+            v-text="cursorLetter"
+          />
         </h2>
       </div>
-
     </div>
 
     <div class="input-container">
-      <input ref="input" v-model="typedInput" @input="handleInput" type="text" spellcheck="false"
-             @keyup.delete="handleBackspace"
-             autocapitalize="off"/>
+      <input
+        ref="input"
+        v-model="typedInput"
+        type="text"
+        spellcheck="false"
+        autocapitalize="off"
+        @input="handleInput"
+        @keyup.delete="handleBackspace"
+      >
     </div>
 
     <div>
-      <pre v-text="activeLetter"></pre>
+      <pre v-text="activeLetter" />
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
+import useSettingStore from '@/store/useSettingStore'
+
+const store = useSettingStore()
 
 const input = ref(null)
 const activeRef = ref(null)
@@ -63,12 +80,12 @@ function handleFocus () {
 
 function handleBackspace () {
   // console.log( 'delete...' )
-  if (activeIdx.value <= 0) return
+  if (activeIdx.value <= 0 || store.stopOnError) return
 
   const next = text.value[--activeIdx.value]
   cursorLetter.value = next === ' ' ? '_' : next
   activeLetter.value = next
-  // errors.delete(activeIdx.value) // todo 👉🏾 only when continue on error
+  errors.delete(activeIdx.value) // todo 👉🏾 only when continue on error
 }
 
 function handleInput () {
@@ -78,13 +95,14 @@ function handleInput () {
   if (typedInput.value !== activeLetter.value) {
     errors.set(activeIdx.value, true)
     typedInput.value = ''
-    return
+
+    if (store.stopOnError) { return null }
   }
 
   // next quote
   if (text.value.length - 1 === activeIdx.value) { // check for end of current text
     activeIdx.value = 0
-    text.value = texts[++activeText.value]
+    text.value = texts[++activeText.value] ?? texts[0] // getting the next quote
 
     const next = text.value[activeIdx.value]
     cursorLetter.value = next === ' ' ? '_' : next
