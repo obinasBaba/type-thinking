@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useModalStore = defineStore('modal-display-state', {
   state: () => {
     return {
-      displaySetting: true,
+      displaySetting: false,
       displayTextPreference: false,
       displayQuoteDetail: false
     }

@@ -15,11 +15,12 @@
       <span
         class="text-pref"
         style="background-image: url('/icon-text.svg') "
+        @click="modalStore.toggleTextPreference"
       />
       <span
         class="setting"
         style="background-image: url('/icon-setting.svg') "
-        @click="toggleSettingClick"
+        @click="modalStore.toggleSetting"
       />
       <button class="login">
         Login
@@ -32,8 +33,6 @@
 import { useModalStore } from '@/store/modalStore'
 
 const modalStore = useModalStore()
-
-const toggleSettingClick = () => modalStore.toggleSetting()
 
 </script>
 

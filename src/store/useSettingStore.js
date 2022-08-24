@@ -24,7 +24,7 @@ export default defineStore('setting-store', {
       capitalCharacter: false,
       stopOnError: true,
       cursor: {
-        shape: ShapeConstants.BOX,
+        shape: ShapeConstants.BLOCK,
         movement: MovementConstants.JUMPING
       }
     }

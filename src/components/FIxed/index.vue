@@ -1,15 +1,14 @@
 <template>
   <div class="fixed-container">
+    <TextPreferenceModal />
     <SettingModal />
   </div>
 </template>
 
-<script>
+<script setup>
 import SettingModal from '@/components/SettingModal'
-export default {
-  name: 'FixedLayout',
-  components: { SettingModal }
-}
+import TextPreferenceModal from '@/components/TextPreferenceModal'
+
 </script>
 
 <style scoped lang="scss">

@@ -1,31 +1,26 @@
 <template>
-  <div class="container is-max-desktop py-6 px-4">
-    <div class="wrapper">
-      <div
-        class="txt"
-        @click="handleFocus"
-      >
-        <h2
-          ref="containerTxt"
-          class="ui header main-text"
+  <div class="container">
+    <div
+      class="wrapper"
+      @click="handleFocus"
+    >
+      <h2 :class="['main-text', storeText.getAlignment() ]">
+        <span
+          v-for="(letter, idx) of text"
+          :key="idx"
+          :ref="el => idx === activeIdx && (activeLetterRef = el)"
+          class="letter"
+          :class="[{isActive: idx === activeIdx}, {[ errors.get(idx) ? 'incorrect' : 'correct' ] : idx < activeIdx} ]"
         >
-          <span
-            v-for="(letter, idx) of text"
-            :key="idx"
-            :ref="el => idx === activeIdx && (activeRef = el)"
-            class="letter"
-            :class="[{isActive: idx === activeIdx}, {[ errors.get(idx) ? 'incorrect' : 'correct' ] : idx < activeIdx} ]"
-          >
-            {{ letter }}
-          </span>
+          {{ letter }}
+        </span>
 
-          <span
-            class="cursor"
-            :style="cursorStyle.style"
-            v-text="cursorLetter"
-          />
-        </h2>
-      </div>
+        <span
+          :class="['cursor', store.getCurrentShape]"
+          :style="cursorStyle.style"
+          v-text="cursorLetter"
+        />
+      </h2>
     </div>
 
     <div class="input-container">
@@ -40,21 +35,30 @@
       >
     </div>
 
-    <div>
+    <!--    <div>
       <pre v-text="activeLetter" />
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
 import useSettingStore from '@/store/useSettingStore'
+import { useTextSettingStore } from '@/store/textSettingModalStore'
 
 const store = useSettingStore()
+const storeText = useTextSettingStore()
+
+store.$subscribe((mutation, state) => {
+  console.log('store changed *** ')
+})
+
+storeText.$subscribe((mutation, state) => {
+  console.log('store changed *** ')
+})
 
 const input = ref(null)
-const activeRef = ref(null)
-const containerTxt = ref(null)
+const activeLetterRef = ref(null)
 const typedInput = ref('')
 
 const activeIdx = ref(0)
@@ -80,7 +84,9 @@ function handleFocus () {
 
 function handleBackspace () {
   // console.log( 'delete...' )
-  if (activeIdx.value <= 0 || store.stopOnError) return
+  if (activeIdx.value <= 0) return
+
+  if (store.stopOnError) return
 
   const next = text.value[--activeIdx.value]
   cursorLetter.value = next === ' ' ? '_' : next
@@ -96,7 +102,9 @@ function handleInput () {
     errors.set(activeIdx.value, true)
     typedInput.value = ''
 
-    if (store.stopOnError) { return null }
+    if (store.stopOnError) {
+      return null
+    }
   }
 
   // next quote
@@ -119,10 +127,10 @@ function handleInput () {
   typedInput.value = ''
 }
 
-watch(activeRef, newRef => {
-  if (!newRef) return
+watch([activeLetterRef], args => {
+  if (!args[0]) return
 
-  cursorStyle.style = { transform: `translateY( ${newRef?.offsetTop}px ) translateX( ${newRef?.offsetLeft}px )` }
+  cursorStyle.style = { transform: `translateY( ${args[0]?.offsetTop}px ) translateX( ${args[0]?.offsetLeft}px )` }
 }, { immediate: true })
 
 onMounted(() => {
@@ -138,23 +146,30 @@ onMounted(() => {
 
   .wrapper {
     position: relative;
-  }
-
-  .txt {
-    position: relative;
     max-width: 90ch;
     padding: 2px;
-
   }
 
   .main-text {
     position: relative;
     word-spacing: 3px;
-    text-align: start;
     //line-height: 1.5;
     font-family: s.$fonts-auger-300;
     font-weight: lighter;
     font-size: 2rem;
+
+    &.left {
+      text-align: left;
+    }
+
+    &.right {
+      text-align: right;
+    }
+
+    &.center {
+      text-align: center;
+    }
+
     /*border: thin solid red;*/
 
     .letter {
@@ -167,20 +182,45 @@ onMounted(() => {
 
       &.incorrect {
         color: red;
-        filter: drop-shadow(0 0 5px red);
+        filter: drop-shadow(0 0 3px red);
       }
 
     }
 
     .cursor {
       position: absolute;
-      background-color: lighten(#000000, 30);
       top: 0;
       left: 0;
+    }
+
+    .block {
+      background-color: lighten(#000000, 30);
       color: white;
-      //line-height: 1.3;
-      //height: auto;
-      //width: auto;
+    }
+
+    .line {
+      //background-color: lighten(#000000, 30);
+      //border-radius: 100px;
+      color: transparent;
+      border-left: 4px solid black;
+      padding-right: 15px;
+      //width: 4px;
+      //margin-right: 14px;
+    }
+
+    .box {
+      color: transparent;
+      background-color: transparent;
+      border: 2px solid black;
+    }
+
+    .terminal {
+      color: transparent;
+      background-color: transparent;
+      border-bottom: 5px solid black;;
+      line-height: 1.1;
+      border-radius: 3px;
+
     }
   }
 
